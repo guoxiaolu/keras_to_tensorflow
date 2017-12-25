@@ -31,16 +31,16 @@ parser.add_argument('-output_fld', action="store",
                     dest='output_fld', type=str, default='.')
 
 parser.add_argument('-input_model_file', action="store", 
-                    dest='input_model_file', type=str, default='model.h5')
+                    dest='input_model_file', type=str, default='mobilenet_multiregression.hdf5')
 
 parser.add_argument('-output_model_file', action="store", 
-                    dest='output_model_file', type=str, default='model.pb')
+                    dest='output_model_file', type=str, default='mobilenet_multiregression.pb')
 
 parser.add_argument('-output_graphdef_file', action="store", 
                     dest='output_graphdef_file', type=str, default='model.ascii')
 
 parser.add_argument('-num_outputs', action="store", 
-                    dest='num_outputs', type=int, default=1)
+                    dest='num_outputs', type=int, default=12)
 
 parser.add_argument('-graph_def', action="store", 
                     dest='graph_def', type=bool, default=False)
@@ -79,6 +79,7 @@ import tensorflow as tf
 import os
 import os.path as osp
 from keras import backend as K
+from keras.applications.mobilenet import relu6, DepthwiseConv2D
 
 output_fld =  args.output_fld
 if not os.path.isdir(output_fld):
@@ -92,7 +93,8 @@ weight_file_path = osp.join(args.input_fld, args.input_model_file)
 
 
 K.set_learning_phase(0)
-net_model = load_model(weight_file_path)
+# net_model = load_model(weight_file_path)
+net_model = load_model(weight_file_path, custom_objects={'relu6': relu6,'DepthwiseConv2D': DepthwiseConv2D})
 
 pred = [None]*num_output
 pred_node_names = [None]*num_output
